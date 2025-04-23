@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -25,5 +27,10 @@ public class UserApiController {
     @GetMapping("/{id}")
     public ApiResponse<UserDto> getUser(@PathVariable Long id) {
         return userService.findUser(id);
+    }
+
+    @GetMapping
+    public ApiResponse<List<UserDto>> getUsers() {
+        return userService.findUsers();
     }
 }

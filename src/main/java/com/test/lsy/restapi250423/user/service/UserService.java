@@ -1,6 +1,6 @@
 package com.test.lsy.restapi250423.user.service;
 
-import com.test.lsy.restapi250423.common.exception.UserNotFoundException;
+import com.test.lsy.restapi250423.common.model.ApiResponse;
 import com.test.lsy.restapi250423.user.model.UserDto;
 import com.test.lsy.restapi250423.user.model.UserEntity;
 import com.test.lsy.restapi250423.user.repository.UserRepository;
@@ -22,29 +22,37 @@ public class UserService {
      * @param id
      * @return
      */
-    public UserDto findUser(Long id) {
-        UserEntity findUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-        return UserDto.builder()
-                .id(findUser.getId())
-                .name(findUser.getName())
-                .email(findUser.getEmail())
-                .build();
+    public ApiResponse<UserDto> findUser(Long id) {
+        return userRepository.findById(id)
+                .map(user -> ApiResponse.success(
+                        UserDto.builder()
+                                .id(user.getId())
+                                .name(user.getName())
+                                .email(user.getEmail())
+                                .build(),
+                        null
+                ))
+                .orElseGet(() -> ApiResponse.success(new UserDto(), null));
     }
 
     /**
      * 사용자 목록 조회
      * @return
      */
-    public List<UserDto> findUsers() {
+    public ApiResponse<List<UserDto>> findUsers() {
         List<UserEntity> users = userRepository.findAll();
+        Long totalCount = (long)users.size();
 
-        return users.stream()
-                .map(user -> UserDto.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .email(user.getEmail())
-                        .build())
-                .toList();
+        // ApiResponse로 감싸서 반환
+        return ApiResponse.success(
+                users.stream()
+                        .map(user -> UserDto.builder()
+                                .id(user.getId())
+                                .name(user.getName())
+                                .email(user.getEmail())
+                                .build())
+                        .toList(),
+                totalCount
+        );
     }
 }
