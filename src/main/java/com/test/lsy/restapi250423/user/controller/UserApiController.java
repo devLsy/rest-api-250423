@@ -25,25 +25,24 @@ public class UserApiController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserDto>> getUser(@PathVariable Long id) {
         ApiResponse<UserDto> response = userService.findUser(id);
-        return new ResponseEntity<>(response, response.getHttpStatus());
+        return ResponseEntity
+                .status(response.getMeta().getHttpStatus())
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDto>>> getUsers() {
         ApiResponse<List<UserDto>> response = userService.findUsers();
-        return new ResponseEntity<>(response, response.getHttpStatus());
+        return ResponseEntity
+                .status(response.getMeta().getHttpStatus())
+                .body(response);
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> saveUser(@RequestBody UserDto userDto) {
         ApiResponse<Long> response = userService.saveUser(userDto);
-        return new ResponseEntity<>(response, response.getHttpStatus());
-    }
-
-    @GetMapping("/test1")
-    public ResponseEntity<ApiResponse<List<String>>> test1() {
-        List<String> tags = List.of("spring", "java", "api");
-        ApiResponse<List<String>> response = ApiResponse.success(tags, (long) tags.size());
-        return new ResponseEntity<>(response, response.getHttpStatus());
+        return ResponseEntity
+                .status(response.getMeta().getHttpStatus())
+                .body(response);
     }
 }
