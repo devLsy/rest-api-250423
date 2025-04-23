@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum ResponseStatus implements CodeEnum {
     SUCCESS("1", "성공", HttpStatus.OK),
     NO_DATA("2", "데이터 없음", HttpStatus.NO_CONTENT),
-    FAIL("-1", "실패", HttpStatus.BAD_GATEWAY);
+    SERVER_FAIL("-1", "실패", HttpStatus.BAD_GATEWAY),
+    BAR_REQUEST("-2", "잘못된 요청", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

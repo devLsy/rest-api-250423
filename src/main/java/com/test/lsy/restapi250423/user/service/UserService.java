@@ -1,5 +1,7 @@
 package com.test.lsy.restapi250423.user.service;
 
+import com.test.lsy.restapi250423.common.constant.MessageConstants;
+import com.test.lsy.restapi250423.common.enu.ResponseStatus;
 import com.test.lsy.restapi250423.common.model.ApiResponse;
 import com.test.lsy.restapi250423.user.model.UserDto;
 import com.test.lsy.restapi250423.user.model.UserEntity;
@@ -32,7 +34,7 @@ public class UserService {
                                 .build(),
                         null
                 ))
-                .orElseGet(ApiResponse::noData);
+                .orElseGet(() -> ApiResponse.fail(MessageConstants.USER_NOT_FOUND, ResponseStatus.BAR_REQUEST.getHttpStatus()));
     }
 
     /**

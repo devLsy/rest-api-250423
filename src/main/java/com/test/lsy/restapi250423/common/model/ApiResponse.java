@@ -35,11 +35,15 @@ public class ApiResponse<T> {
         );
     }
 
-    public static <T> ApiResponse<T> fail(String message) {
-        return new ApiResponse<>(ResponseStatus.FAIL.getCode(),
-                ResponseStatus.FAIL.getMsg(),
+    public static <T> ApiResponse<T> fail(String message, HttpStatus status) {
+        return new ApiResponse<>(ResponseStatus.SERVER_FAIL.getCode(),
+                ResponseStatus.SERVER_FAIL.getMsg(),
                 null,
                 null,
-                ResponseStatus.FAIL.getHttpStatus());
+                status);
+    }
+
+    public static <T> ApiResponse<T> fail(HttpStatus status) {
+        return fail(ResponseStatus.BAR_REQUEST.getMsg(), status);
     }
 }
