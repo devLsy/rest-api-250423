@@ -6,10 +6,7 @@ import com.test.lsy.restapi250423.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +31,12 @@ public class UserApiController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserDto>>> getUsers() {
         ApiResponse<List<UserDto>> response = userService.findUsers();
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<Long>> saveUser(@RequestBody UserDto userDto) {
+        ApiResponse<Long> response = userService.saveUser(userDto);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

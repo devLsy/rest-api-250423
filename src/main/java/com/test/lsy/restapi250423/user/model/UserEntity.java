@@ -17,4 +17,9 @@ public class UserEntity {
     private Long id;
     private String name;
     private String email;
+
+    public UserEntity(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }
