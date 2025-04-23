@@ -5,6 +5,7 @@ import com.test.lsy.restapi250423.user.model.UserDto;
 import com.test.lsy.restapi250423.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +26,14 @@ public class UserApiController {
      * @return
      */
     @GetMapping("/{id}")
-    public ApiResponse<UserDto> getUser(@PathVariable Long id) {
-        return userService.findUser(id);
+    public ResponseEntity<ApiResponse<UserDto>> getUser(@PathVariable Long id) {
+        ApiResponse<UserDto> response = userService.findUser(id);
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 
     @GetMapping
-    public ApiResponse<List<UserDto>> getUsers() {
-        return userService.findUsers();
+    public ResponseEntity<ApiResponse<List<UserDto>>> getUsers() {
+        ApiResponse<List<UserDto>> response = userService.findUsers();
+        return new ResponseEntity<>(response, response.getHttpStatus());
     }
 }

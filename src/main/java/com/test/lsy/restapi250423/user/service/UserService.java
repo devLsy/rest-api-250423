@@ -32,7 +32,7 @@ public class UserService {
                                 .build(),
                         null
                 ))
-                .orElseGet(() -> ApiResponse.success(new UserDto(), null));
+                .orElseGet(ApiResponse::noData);
     }
 
     /**
@@ -41,6 +41,11 @@ public class UserService {
      */
     public ApiResponse<List<UserDto>> findUsers() {
         List<UserEntity> users = userRepository.findAll();
+
+        if(users.isEmpty()) {
+            return ApiResponse.noData();
+        }
+
         Long totalCount = (long)users.size();
 
         // ApiResponse로 감싸서 반환
