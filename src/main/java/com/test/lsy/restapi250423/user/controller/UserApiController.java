@@ -39,4 +39,11 @@ public class UserApiController {
         ApiResponse<Long> response = userService.saveUser(userDto);
         return new ResponseEntity<>(response, response.getHttpStatus());
     }
+
+    @GetMapping("/test1")
+    public ResponseEntity<ApiResponse<List<String>>> test1() {
+        List<String> tags = List.of("spring", "java", "api");
+        ApiResponse<List<String>> response = ApiResponse.success(tags, (long) tags.size());
+        return new ResponseEntity<>(response, response.getHttpStatus());
+    }
 }
