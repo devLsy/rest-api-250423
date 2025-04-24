@@ -3,6 +3,9 @@ package com.test.lsy.restapi250423.user.service;
 import com.test.lsy.restapi250423.common.constant.MessageConstants;
 import com.test.lsy.restapi250423.common.enu.ResponseStatus;
 import com.test.lsy.restapi250423.common.model.ApiResponse;
+import com.test.lsy.restapi250423.user.mapper.UserMapper;
+import com.test.lsy.restapi250423.user.model.FlatUserOrderItemDto;
+import com.test.lsy.restapi250423.user.model.User2Dto;
 import com.test.lsy.restapi250423.user.model.UserDto;
 import com.test.lsy.restapi250423.user.model.UserEntity;
 import com.test.lsy.restapi250423.user.repository.UserRepository;
@@ -19,6 +22,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     /**
      * 단일 사용자 조회
@@ -64,8 +68,46 @@ public class UserService {
         );
     }
 
+    public User2Dto getUserHierarchy() {
+        List<FlatUserOrderItemDto> flatList = userMapper.selectUserOrderItems();
+
+        User2Dto user = null;
+
+        for (FlatUserOrderItemDto row : flatList) {
+            if (user == null) {
+                user = new User2Dto();
+                user.setUserId(row.getUserId());
+                user.setUsername(row.getUsername());
+            }
+
+            User2Dto.OrderDto order = findOrder(user.getOrders(), row.getOrderId());
+            if (order == null) {
+                order = new User2Dto.OrderDto();
+                order.setOrderId(row.getOrderId());
+                order.setOrderDate(row.getOrderDate());
+                user.getOrders().add(order);
+            }
+
+            if (row.getItemId() != null) {
+                User2Dto.ItemDto item = new User2Dto.ItemDto();
+                item.setItemId(row.getItemId());
+                item.setItemName(row.getItemName());
+                item.setQuantity(row.getQuantity());
+                order.getItems().add(item);
+            }
+        }
+        return user;
+    }
+
+    private User2Dto.OrderDto findOrder(List<User2Dto.OrderDto> orders, Long orderId) {
+        for (User2Dto.OrderDto order : orders) {
+            if (order.getOrderId().equals(orderId)) return order;
+        }
+        return null;
+    }
+
     @Transactional
-    public ApiResponse<Long> saveUser(UserDto user) {
+    public ApiResponse<Long> addUser(UserDto user) {
 
         try {
             UserEntity userEntity = new UserEntity(user.getName(), user.getEmail());

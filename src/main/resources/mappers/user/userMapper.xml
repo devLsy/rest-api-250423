@@ -3,15 +3,18 @@
 
 <mapper namespace="com.test.lsy.restapi250423.user.mapper.UserMapper">
 
-    <select id="selectUserOrderItems" resultType="com.test.lsy.restapi250423.user.model.FlatUserOrderItemDto">
+    <select id="selectUserOrderItems" resultType="FlatUserOrderItemDto">
         SELECT
-            u.id AS userId, u.username,
-            o.id AS orderId, o.order_date AS orderDate,
-            i.id AS itemId, i.name AS itemName, i.quantity
+            u.id AS userId,
+            u.username,
+            o.id AS orderId,
+            o.order_date AS orderDate,
+            i.id AS itemId,
+            i.name AS itemName,
+            i.quantity
         FROM users u
-                 INNER JOIN orders o ON u.id = o.user_id
-                 LEFT OUTER JOIN order_items i ON o.id = i.order_id
-        WHERE u.id = #{userId}
+        INNER JOIN orders o ON u.id = o.user_id
+        LEFT OUTER JOIN order_items i ON o.id = i.order_id
     </select>
 
 </mapper>

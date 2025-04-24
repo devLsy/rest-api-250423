@@ -1,6 +1,7 @@
 package com.test.lsy.restapi250423.user.controller;
 
 import com.test.lsy.restapi250423.common.model.ApiResponse;
+import com.test.lsy.restapi250423.user.model.User2Dto;
 import com.test.lsy.restapi250423.user.model.UserDto;
 import com.test.lsy.restapi250423.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +39,14 @@ public class UserApiController {
                 .body(response);
     }
 
+    @GetMapping("/1")
+    public ResponseEntity<User2Dto> getUserInfo() {
+        return ResponseEntity.ok(userService.getUserHierarchy());
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<Long>> saveUser(@RequestBody UserDto userDto) {
-        ApiResponse<Long> response = userService.saveUser(userDto);
+        ApiResponse<Long> response = userService.addUser(userDto);
         return ResponseEntity
                 .status(response.getMeta().getHttpStatus())
                 .body(response);
