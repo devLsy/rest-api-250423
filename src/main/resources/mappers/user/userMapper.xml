@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.lsy.restapi250423.user.mapper.UserMapper">
+
+    <select id="selectUserOrderItems" resultType="com.test.lsy.restapi250423.user.model.FlatUserOrderItemDto">
+        SELECT
+            u.id AS userId, u.username,
+            o.id AS orderId, o.order_date AS orderDate,
+            i.id AS itemId, i.name AS itemName, i.quantity
+        FROM users u
+                 INNER JOIN orders o ON u.id = o.user_id
+                 LEFT OUTER JOIN order_items i ON o.id = i.order_id
+        WHERE u.id = #{userId}
+    </select>
+
+</mapper>
