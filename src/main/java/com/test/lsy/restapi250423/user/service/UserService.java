@@ -118,9 +118,9 @@ public class UserService {
             }
 
             // 일부러 예외 발생시켜 롤백 테스트
-            throw new RuntimeException("강제 롤백 테스트");
+//            throw new RuntimeException("강제 롤백 테스트");
 
-//            return ApiResponse.success(savedId, null);
+            return ApiResponse.success(savedId, null);
 
         } catch(Exception e) {
             log.error("사용자 저장 중 예외 발생: {}", e.getMessage(), e);

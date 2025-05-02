@@ -32,7 +32,7 @@ public class TransactionConfig {
         TransactionInterceptor txAdvice = new TransactionInterceptor();
 
         List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
-        rollbackRules.add(new RollbackRuleAttribute(Exception.class));
+        rollbackRules.add(new RollbackRuleAttribute(RuntimeException.class));
 
         // 1. 기본 읽기 전용 트랜잭션 속성
         DefaultTransactionAttribute readOnlyAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
