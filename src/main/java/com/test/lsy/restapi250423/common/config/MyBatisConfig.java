@@ -43,7 +43,7 @@ public class MyBatisConfig {
         return sqlSessionTemplate;
     }
 
-    @Bean(name="txManager")
+    @Bean(name="transactionManager")
     public PlatformTransactionManager txManager(DataSource dataSource) {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource);
         dataSourceTransactionManager.setNestedTransactionAllowed(true);

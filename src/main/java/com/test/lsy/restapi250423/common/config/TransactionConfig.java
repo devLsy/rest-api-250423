@@ -34,19 +34,28 @@ public class TransactionConfig {
         List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
         rollbackRules.add(new RollbackRuleAttribute(Exception.class));
 
-        DefaultTransactionAttribute attribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
-        String transactionAttributesDefinition = attribute.toString();
+        // 1. 기본 읽기 전용 트랜잭션 속성
+        DefaultTransactionAttribute readOnlyAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
+        readOnlyAttribute.setReadOnly(true);
+
+        // 2. CUD용 쓰기 트랜잭션 속성
+        RuleBasedTransactionAttribute writeAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
+        writeAttribute.setReadOnly(false);
 
         Properties txAttributes = new Properties();
-        txAttributes.setProperty("select*", transactionAttributesDefinition);
-        txAttributes.setProperty("insert*", transactionAttributesDefinition);
-        txAttributes.setProperty("update*", transactionAttributesDefinition);
-        txAttributes.setProperty("delete*", transactionAttributesDefinition);
-        txAttributes.setProperty("create*", transactionAttributesDefinition);
-        txAttributes.setProperty("add*", transactionAttributesDefinition);
-        txAttributes.setProperty("modify*", transactionAttributesDefinition);
-        txAttributes.setProperty("remove*", transactionAttributesDefinition);
-        txAttributes.setProperty("useTransaction*", transactionAttributesDefinition);
+
+        // 기본으로 전체를 읽기 전용 트랜잭션 처리
+        txAttributes.setProperty("*", readOnlyAttribute.toString());
+
+        // CUD 메서드 이름 패턴은 쓰기 트랜잭션 처리
+        txAttributes.setProperty("insert*", writeAttribute.toString());
+        txAttributes.setProperty("update*", writeAttribute.toString());
+        txAttributes.setProperty("delete*", writeAttribute.toString());
+        txAttributes.setProperty("create*", writeAttribute.toString());
+        txAttributes.setProperty("add*", writeAttribute.toString());
+        txAttributes.setProperty("modify*", writeAttribute.toString());
+        txAttributes.setProperty("remove*", writeAttribute.toString());
+        txAttributes.setProperty("useTransaction*", writeAttribute.toString());
 
         txAdvice.setTransactionAttributes(txAttributes);
         txAdvice.setTransactionManager(txManager);
@@ -58,8 +67,7 @@ public class TransactionConfig {
     @Bean
     public DefaultPointcutAdvisor txAdviceAdvisor() {
         AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
-        pointcut.setExpression("execution(* com.test.lsy.restapi250423.service.*service.*(..))");
+        pointcut.setExpression("execution(* com.test.lsy.restapi250423..service..*(..))");
         return new DefaultPointcutAdvisor(pointcut, txAdvice());
     }
-
 }

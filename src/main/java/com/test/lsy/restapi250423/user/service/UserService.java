@@ -12,7 +12,6 @@ import com.test.lsy.restapi250423.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -106,19 +105,22 @@ public class UserService {
         return null;
     }
 
-    @Transactional
     public ApiResponse<Long> addUser(UserDto user) {
 
         try {
             UserEntity userEntity = new UserEntity(user.getName(), user.getEmail());
 
             Long savedId = userRepository.save(userEntity).getId();
+            userRepository.flush(); // flush를 강제로 호출(테스트)
 
             if (savedId == null || savedId <= 0) {
                 throw new IllegalStateException("저장된 ID가 유효하지 않습니다.");
             }
 
-            return ApiResponse.success(savedId, null);
+            // 일부러 예외 발생시켜 롤백 테스트
+            throw new RuntimeException("강제 롤백 테스트");
+
+//            return ApiResponse.success(savedId, null);
 
         } catch(Exception e) {
             log.error("사용자 저장 중 예외 발생: {}", e.getMessage(), e);
