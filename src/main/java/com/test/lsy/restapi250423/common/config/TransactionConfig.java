@@ -9,14 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
-import org.springframework.transaction.interceptor.RollbackRuleAttribute;
-import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
+import org.springframework.transaction.interceptor.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Slf4j
 @Aspect
@@ -28,39 +24,37 @@ public class TransactionConfig {
 
     @Bean
     public TransactionInterceptor txAdvice() {
-
-        TransactionInterceptor txAdvice = new TransactionInterceptor();
-
+        // 롤백 규칙: RuntimeException 발생 시 롤백
         List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
         rollbackRules.add(new RollbackRuleAttribute(RuntimeException.class));
 
         // 1. 기본 읽기 전용 트랜잭션 속성
-        DefaultTransactionAttribute readOnlyAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
+        RuleBasedTransactionAttribute readOnlyAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
         readOnlyAttribute.setReadOnly(true);
 
-        // 2. CUD용 쓰기 트랜잭션 속성
+        // 2. 쓰기 트랜잭션 속성
         RuleBasedTransactionAttribute writeAttribute = new RuleBasedTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED, rollbackRules);
         writeAttribute.setReadOnly(false);
 
-        Properties txAttributes = new Properties();
+        // 메서드 이름 기반 트랜잭션 속성 설정
+        NameMatchTransactionAttributeSource transactionAttributeSource = new NameMatchTransactionAttributeSource();
 
-        // 기본으로 전체를 읽기 전용 트랜잭션 처리
-        txAttributes.setProperty("*", readOnlyAttribute.toString());
+        // 기본적으로 모든 메서드는 읽기 전용 트랜잭션
+        transactionAttributeSource.addTransactionalMethod("*", readOnlyAttribute);
 
-        // CUD 메서드 이름 패턴은 쓰기 트랜잭션 처리
-        txAttributes.setProperty("insert*", writeAttribute.toString());
-        txAttributes.setProperty("update*", writeAttribute.toString());
-        txAttributes.setProperty("delete*", writeAttribute.toString());
-        txAttributes.setProperty("create*", writeAttribute.toString());
-        txAttributes.setProperty("add*", writeAttribute.toString());
-        txAttributes.setProperty("modify*", writeAttribute.toString());
-        txAttributes.setProperty("remove*", writeAttribute.toString());
-        txAttributes.setProperty("useTransaction*", writeAttribute.toString());
+        // CUD 메서드는 쓰기 트랜잭션
+        transactionAttributeSource.addTransactionalMethod("insert*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("update*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("delete*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("create*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("save*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("add*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("modify*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("remove*", writeAttribute);
+        transactionAttributeSource.addTransactionalMethod("useTransaction*", writeAttribute);
 
-        txAdvice.setTransactionAttributes(txAttributes);
-        txAdvice.setTransactionManager(txManager);
-
-        return txAdvice;
+        // 트랜잭션 속성을 TransactionInterceptor에 설정
+        return new TransactionInterceptor(txManager, transactionAttributeSource);
 
     }
 
