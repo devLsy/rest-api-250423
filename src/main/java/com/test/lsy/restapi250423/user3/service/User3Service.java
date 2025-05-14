@@ -41,7 +41,11 @@ public class User3Service {
                                 .build(),
                         null
                 ))
-                .orElseGet(() -> ApiResponse.fail(MessageConstants.USER_NOT_FOUND, ResponseStatus.BAR_REQUEST.getHttpStatus()));
+                .orElseGet(() -> ApiResponse.fail(
+                        MessageConstants.USER_NOT_FOUND,
+                        ResponseStatus.BAR_REQUEST.getHttpStatus(),
+                        List.of()
+                ));
     }
 
     /**

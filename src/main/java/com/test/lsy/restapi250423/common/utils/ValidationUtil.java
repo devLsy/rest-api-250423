@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -19,9 +20,8 @@ public class ValidationUtil {
             List<ObjectError> errList = br.getAllErrors();
             StringBuilder errorMsg = new StringBuilder();
 
-            for (ObjectError err : br.getAllErrors()) {
+            for (ObjectError err : errList) {
                 if (err instanceof FieldError) {
-
                     FieldError fieldError = (FieldError) err;
                     String fieldName = fieldError.getField();
                     String errorMessage = fieldError.getDefaultMessage();
@@ -31,6 +31,7 @@ public class ValidationUtil {
                 }
             }
 
+            List<String> errors = Arrays.asList(errorMsg.toString().split(";"));
             throw new ValidationException(errorMsg.toString());
         }
     }

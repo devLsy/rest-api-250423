@@ -18,11 +18,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationException(ValidationException ex) {
         String errorMessage = ex.getMessage();
-
-        // 에러 메시지 로깅 (서버 측)
+        // 서버 측에서 오류 메시지 로깅 (상세한 정보)
+        log.error("Validation Error: {}", errorMessage);
+        // 오류 메시지를 ";"로 분리하여 리스트로 변환
         List<String> errors = Arrays.asList(errorMessage.split(";"));
 
-        ApiResponse<Object> response = ApiResponse.fail("유효성 검증이 실패했습니다.", HttpStatus.BAD_REQUEST);
+        ApiResponse<Object> response = ApiResponse.fail("유효성 검증이 실패했습니다.", HttpStatus.BAD_REQUEST, errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 

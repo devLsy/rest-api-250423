@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -17,6 +18,7 @@ public class ApiResponse<T> {
 
     private Meta meta;
     private T data;
+    private List<String> errors;
 
     @Data
     @AllArgsConstructor
@@ -72,7 +74,7 @@ public class ApiResponse<T> {
      * @param status HTTP 상태 코드
      * @return 실패 응답 객체
      */
-    public static <T> ApiResponse<T> fail(String message, HttpStatus status) {
+    public static <T> ApiResponse<T> fail(String message, HttpStatus status, List<String> errors) {
         return ApiResponse.<T>builder()
                 .meta(Meta.builder()
                         .code(ResponseStatus.SERVER_FAIL.getCode())
@@ -81,6 +83,9 @@ public class ApiResponse<T> {
                         .traceId(generateTraceId())
                         .build())
                 .data(null)
+                .errors(errors != null
+                        ? errors.stream().map(String::trim).filter(e -> !e.isEmpty()).toList()
+                        : null)
                 .build();
     }
 
@@ -90,7 +95,7 @@ public class ApiResponse<T> {
      * @return 실패 응답 객체
      */
     public static <T> ApiResponse<T> fail(HttpStatus status) {
-        return fail(ResponseStatus.BAR_REQUEST.getMsg(), status);
+        return fail(ResponseStatus.BAR_REQUEST.getMsg(), status, null);
     }
 
     /**
