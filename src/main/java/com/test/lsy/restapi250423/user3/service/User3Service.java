@@ -26,6 +26,34 @@ public class User3Service {
     private final User3Repository user3Repository;
     private final UserMapper userMapper;
 
+    public ApiResponse<Long> addUser(User3Dto userDto3, BindingResult br) {
+
+        if(br.hasErrors()) {
+            ValidationUtil.invokeErrors(this.getClass().getName(), br);
+        }
+
+        try {
+            User3Entity user3Entity = new User3Entity(userDto3.getName(), userDto3.getEmail());
+
+            Long savedId = user3Repository.save(user3Entity).getId();
+//            user3Repository.flush(); // flush를 강제로 호출(테스트)
+
+            if (savedId == null || savedId <= 0) {
+                throw new IllegalStateException("저장된 ID가 유효하지 않습니다.");
+            }
+
+            // 일부러 예외 발생시켜 롤백 테스트
+//            throw new RuntimeException("강제 롤백 테스트");
+
+            return ApiResponse.success(savedId, null);
+
+        } catch(Exception e) {
+            log.error("사용자 저장 중 예외 발생: {}", e.getMessage(), e);
+            // 예외 재던지기 (롤백 유도)
+            throw new RuntimeException("사용자 저장 실패", e);
+        }
+    }
+
     /**
      * 단일 사용자 조회
      * @param id
@@ -110,33 +138,5 @@ public class User3Service {
             if (order.getOrderId().equals(orderId)) return order;
         }
         return null;
-    }
-
-    public ApiResponse<Long> addUser(User3Dto userDto3, BindingResult br) {
-
-        if(br.hasErrors()) {
-            ValidationUtil.invokeErrors(this.getClass().getName(), br);
-        }
-
-        try {
-            User3Entity user3Entity = new User3Entity(userDto3.getName(), userDto3.getEmail());
-
-            Long savedId = user3Repository.save(user3Entity).getId();
-//            user3Repository.flush(); // flush를 강제로 호출(테스트)
-
-            if (savedId == null || savedId <= 0) {
-                throw new IllegalStateException("저장된 ID가 유효하지 않습니다.");
-            }
-
-            // 일부러 예외 발생시켜 롤백 테스트
-//            throw new RuntimeException("강제 롤백 테스트");
-
-            return ApiResponse.success(savedId, null);
-
-        } catch(Exception e) {
-            log.error("사용자 저장 중 예외 발생: {}", e.getMessage(), e);
-            // 예외 재던지기 (롤백 유도)
-            throw new RuntimeException("사용자 저장 실패", e);
-        }
     }
 }
