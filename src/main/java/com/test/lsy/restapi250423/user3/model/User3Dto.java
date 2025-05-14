@@ -18,12 +18,10 @@ public class User3Dto {
     @JsonIgnore @Schema(hidden = true)
     private Long id;
 
-//    @NotNull @NotEmpty
     @NotBlank(message = "{name.notblank}")
     private String name;
 
-//    @NotNull @NotEmpty
-    @Email(message = "{email.invalid}")
+    @NotBlank(message = "{email.notblank}") @Email(message = "{email.invalid}")
     private String email;
 
     @Builder
