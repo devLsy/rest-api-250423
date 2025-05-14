@@ -2,8 +2,8 @@ package com.test.lsy.restapi250423.user3.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,10 +18,12 @@ public class User3Dto {
     @JsonIgnore @Schema(hidden = true)
     private Long id;
 
-    @NotNull @NotEmpty
+//    @NotNull @NotEmpty
+    @NotBlank(message = "{name.notblank}")
     private String name;
 
-    @NotNull @NotEmpty
+//    @NotNull @NotEmpty
+    @Email(message = "{email.invalid}")
     private String email;
 
     @Builder
