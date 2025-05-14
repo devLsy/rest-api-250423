@@ -1,6 +1,6 @@
 package com.test.lsy.restapi250423.config;
 
-import com.test.lsy.restapi250423.utils.StringUtils;
+import com.test.lsy.restapi250423.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Value;

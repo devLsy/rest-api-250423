@@ -1,4 +1,4 @@
-package com.test.lsy.restapi250423.user.model;
+package com.test.lsy.restapi250423.user3.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class UserDto {
+public class User3Dto {
 
     @JsonIgnore @Schema(hidden = true)
     private Long id;
@@ -25,7 +25,7 @@ public class UserDto {
     private String email;
 
     @Builder
-    public UserDto(Long id, String name, String email) {
+    public User3Dto(Long id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;

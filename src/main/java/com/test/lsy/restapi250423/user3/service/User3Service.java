@@ -1,26 +1,29 @@
-package com.test.lsy.restapi250423.user.service;
+package com.test.lsy.restapi250423.user3.service;
 
 import com.test.lsy.restapi250423.common.constant.MessageConstants;
 import com.test.lsy.restapi250423.common.enu.ResponseStatus;
 import com.test.lsy.restapi250423.common.model.ApiResponse;
+import com.test.lsy.restapi250423.common.utils.ValidationUtil;
 import com.test.lsy.restapi250423.user.mapper.UserMapper;
 import com.test.lsy.restapi250423.user.model.FlatUserOrderItemDto;
 import com.test.lsy.restapi250423.user.model.User2Dto;
 import com.test.lsy.restapi250423.user.model.UserDto;
-import com.test.lsy.restapi250423.user.model.UserEntity;
-import com.test.lsy.restapi250423.user.repository.UserRepository;
+import com.test.lsy.restapi250423.user3.model.User3Dto;
+import com.test.lsy.restapi250423.user3.model.User3Entity;
+import com.test.lsy.restapi250423.user3.repository.User3Repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class User3Service {
 
-    private final UserRepository userRepository;
+    private final User3Repository user3Repository;
     private final UserMapper userMapper;
 
     /**
@@ -29,7 +32,7 @@ public class UserService {
      * @return
      */
     public ApiResponse<UserDto> findUser(Long id) {
-        return userRepository.findById(id)
+        return user3Repository.findById(id)
                 .map(user -> ApiResponse.success(
                         UserDto.builder()
                                 .id(user.getId())
@@ -46,7 +49,7 @@ public class UserService {
      * @return
      */
     public ApiResponse<List<UserDto>> findUsers() {
-        List<UserEntity> users = userRepository.findAll();
+        List<User3Entity> users = user3Repository.findAll();
 
         if(users.isEmpty()) {
             return ApiResponse.noData();
@@ -105,13 +108,17 @@ public class UserService {
         return null;
     }
 
-    public ApiResponse<Long> addUser(UserDto userDto) {
+    public ApiResponse<Long> addUser(User3Dto userDto3, BindingResult br) {
+
+        if(br.hasErrors()) {
+            ValidationUtil.invokeErrors(this.getClass().getName(), br);
+        }
 
         try {
-            UserEntity userEntity = new UserEntity(userDto.getName(), userDto.getEmail());
+            User3Entity user3Entity = new User3Entity(userDto3.getName(), userDto3.getEmail());
 
-            Long savedId = userRepository.save(userEntity).getId();
-            userRepository.flush(); // flush를 강제로 호출(테스트)
+            Long savedId = user3Repository.save(user3Entity).getId();
+//            user3Repository.flush(); // flush를 강제로 호출(테스트)
 
             if (savedId == null || savedId <= 0) {
                 throw new IllegalStateException("저장된 ID가 유효하지 않습니다.");

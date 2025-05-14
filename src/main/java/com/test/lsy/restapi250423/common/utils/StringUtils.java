@@ -1,4 +1,4 @@
-package com.test.lsy.restapi250423.utils;
+package com.test.lsy.restapi250423.common.utils;
 
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
